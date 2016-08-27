@@ -1,0 +1,69 @@
+set nocompatible
+
+" 主题
+colo gruvbox
+"colorscheme molokai
+"let g:molokai_original = 1
+
+" 基础设置
+if has("win32")                 " 字体 && 字号
+    set guifont=Consolas:h12:cANSI
+    au GUIEnter * simalt ~x
+else
+    set guifont=Monaco:h14
+endif
+syntax on                       " 打开语法高亮
+set number                      " 显示行号
+set autoindent                  " 设置缩进有三个取值 cindent (c风格)
+                                " smartindent (智能模式)
+                                " autoindent (简单的与上一行保持一致)
+set tabstop=4                   " 设置 tab 键的宽度
+set expandtab
+set shiftwidth=4                " 换行时行间交错使用4个空格
+set backspace=indent,eol,start  " 设置退格键可用
+                                " indent如果用了 set indent, set ai 等自动缩进想用退格键将字段缩进的删掉必须设置这个选项否则不响应
+                                " eol如果插入模式下在行开头想通过退格键合并两行需要设置eol
+                                " start要想删除此次插入前的输入需设置这个
+set smarttab                    " 每次按 backspace 时删除4个空格
+set incsearch                   " 增量式搜索(遍搜索遍显示内容)
+set hlsearch                    " 高亮搜索
+filetype on                     " 打开文件类型检测功能
+filetype plugin on              " 允许加载文件类型插件
+filetype indent on              " 允许为不同类型的文件定义不同的缩进格式
+set showmatch                   " 显示括号配对情况
+"set foldenable                 " 开启代码折叠
+"set foldmethod=syntax          " 自动语法折叠
+set nobackup                    " 禁止生成备份
+set noswapfile                  " 不产生 swp 文件
+set mouse=a                     " 启用鼠标
+set nowrap                      " 设置不自动折行
+set cursorline                  " 突出显示当前行
+set clipboard=unnamed           " 与 windows 共享剪贴板
+set cmdheight=1                 " 命令行在状态行下的高度默认为1
+set laststatus=2                " 开启状态栏信息
+
+" 设置窗口
+if has("gui_running")
+    " au GUIEnter * simalt ~x   " 窗口启动时自动最大化
+    winpos 70 25                " 指定窗口出现的位置坐标原点在屏幕左上角
+    set lines=55 columns=180    " 指定窗口大小lines 为高度columns 为宽度
+    set guioptions+=c           " 使用字符提示框
+    set guioptions-=m           " 隐藏菜单栏
+    set guioptions-=T           " 隐藏工具栏
+    set guioptions=L            " 隐藏左侧滚动条
+    set guioptions=r            " 隐藏右侧滚动条
+    set guioptions-=b           " 隐藏底部滚动条
+    set showtabline=0           " 隐藏 Tab 栏
+endif
+
+" 设置编码
+set fenc=utf-8                              " 设置编码
+set encoding=utf-8                          " 内部的程序识别编码
+set fileencoding=utf-8                      " 当前文件编辑时使用的文件编码
+set fileencodings=utf-8,gbk,cp936,latin-1   " gvim 打开文件是支持的编码
+language messages zh_CN.utf-8               " 解决 consle 输出乱码
+set ambiwidth=double                        " 防止特殊符号无法显示
+set helplang=cn                             " 中文帮助
+
+" 设置jk切换到normal mode
+inoremap jk <ESC>
