@@ -1,0 +1,129 @@
+set tabstop=4       " Number of spaces that a <Tab> in the file counts for.
+
+set shiftwidth=4    " Number of spaces to use for each step of (auto)indent.
+
+set expandtab       " Use the appropriate number of spaces to insert a <Tab>.
+                    " Spaces are used in indents with the '>' and '<' commands
+                    " and when 'autoindent' is on. To insert a real tab when
+                    " 'expandtab' is on, use CTRL-V <Tab>.
+
+set smarttab        " When on, a <Tab> in front of a line inserts blanks
+                    " according to 'shiftwidth'. 'tabstop' is used in other
+                    " places. A <BS> will delete a 'shiftwidth' worth of space
+                    " at the start of the line.
+
+set showcmd         " Show (partial) command in status line.
+set number          " Show line numbers.
+"set mouse=a         " Enable the use of the mouse.
+""set paste
+set autoindent      " Copy indent from current line when starting a new line
+                    " (typing <CR> in Insert mode or when using the "o" or "O"
+                    "                     " command).
+set showmatch       " When a bracket is inserted, briefly jump to the matching
+                    " one. The jump is only done if the match can be seen on the
+                    " screen. The time to show the match can be set with
+                    " 'matchtime'.
+
+set hlsearch        " When there is a previous search pattern, highlight all
+                    " its matches.
+
+set incsearch       " While typing a search command, show immediately where the
+                    " so far typed pattern matches.
+
+set ignorecase      " Ignore case in search patterns.
+
+set smartcase       " Override the 'ignorecase' option if the search pattern
+                    " contains upper case characters.
+set relativenumber
+
+set colorcolumn=80
+" 设置jk切换到normal mode
+inoremap jk <ESC>
+inoremap kj <ESC>
+
+" Vimdiff color
+if &diff
+    colorscheme evening
+endif
+
+console prompt color
+export PS1="\[\033[01;32m\]\t:\w\\$\[\033[00m\] \[$(tput sgr0)\]"
+
+================================================================================
+#!/usr/bin/env python
+import subprocess
+import time
+import shlex
+
+INTERVAL = 2
+
+while True:
+    if '2560' in subprocess.check_output(shlex.split('dconf read
+/com/ubuntu/user-interface/scale-factor')):
+        subprocess.check_output(shlex.split(('dconf write
+/com/ubuntu/user-interface/scale-factor "{\'VGA-1\': 12}"')))
+    else:
+        subprocess.check_output(shlex.split(('dconf write
+/com/ubuntu/user-interface/scale-factor "{\'VGA-1\': 8}"')))
+    time.sleep(INTERVAL)
+
+-------------------------------------------------------------------------------
+import subprocess
+ 
+cmd = ['xrandr']
+cmd2 = ['grep', '*']
+p = subprocess.Popen(cmd, stdout=subprocess.PIPE)
+p2 = subprocess.Popen(cmd2, stdin=p.stdout, stdout=subprocess.PIPE)
+p.stdout.close()
+ 
+resolution_string, junk = p2.communicate()
+resolution = resolution_string.split()[0]
+width, height = resolution.split('x')
+
+
+-------------------------------------------------------------------------------
+xdpyinfo  | grep -oP 'dimensions:\s+\K\S+'
+#!/usr/bin/env python
+import subprocess
+import time
+import shlex
+import re
+import os
+
+INTERVAL = 2
+PATTERN = re.compile(r'dimensions:\s*(?P<res>\d+x\d+)\spixels')
+SCALE_FACTOR = '/com/ubuntu/user-interface/scale-factor'
+MAP = {'2560x1267': 12,
+       '2560x1331': 12,
+       '2560x1440': 12,
+       '1680x941': 8}
+
+
+def getCurrentResolution():
+    xdpyinfo = subprocess.check_output('xdpyinfo')
+    return PATTERN.search(xdpyinfo).group('res')
+
+
+def setScale(scale):
+    if str(scale) not in subprocess.check_output(shlex.split('dconf read '
++ SCALE_FACTOR)):
+        subprocess.check_output(shlex.split(('dconf write ' + SCALE_FACTOR
++ ' "{\'VGA-1\': %d}"') % scale))
+
+
+def main():
+    while True:
+        setScale(MAP.get(getCurrentResolution(), 8))
+        time.sleep(INTERVAL)
+
+
+try:
+    pid = os.fork()
+ 
+    if pid == 0:
+        main()
+    else:
+        print "Started"
+ 
+except OSError, e:
+    pass
