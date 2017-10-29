@@ -1,2 +1,0 @@
-console prompt color
-export PS1="\[\033[01;32m\]\t:\w\\$\[\033[00m\] \[$(tput sgr0)\]"
